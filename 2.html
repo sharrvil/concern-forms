@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Problem Reporting Form</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #e0eafc, #cfdef3);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 15px;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .form-container {
+    width: 100%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(16px);
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    padding: 30px 25px;
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-container {
+    width: 100%;
+    height: 120px; /* Increased height for larger logo */
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 10px;
+  }
+
+  .logo-img {
+    max-width: 95%;
+    max-height: 100px; /* Increased max height for logo */
+    object-fit: contain;
+  }
+
+  .logo-text {
+    font-weight: 700;
+    color: #333;
+    font-size: 1.8rem; /* Increased font size */
+    text-align: center;
+  }
+
+  h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .field {
+    position: relative;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 14px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
+    min-height: 48px; /* Consistent height for all inputs */
+  }
+
+  /* Fix for date field width on mobile */
+  input[type="date"] {
+    -webkit-appearance: none;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: #6b9dfc;
+    background: rgba(255, 255, 255, 0.8);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(107, 157, 252, 0.2);
+  }
+
+  label {
+    position: absolute;
+    left: 12px;
+    top: 14px;
+    font-size: 0.9rem;
+    color: #555;
+    pointer-events: none;
+    transition: 0.25s ease;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 0 4px;
+    border-radius: 4px;
+  }
+
+  input:focus + label,
+  textarea:focus + label,
+  select:focus + label,
+  input:not(:placeholder-shown) + label,
+  textarea:not(:placeholder-shown) + label,
+  select:not([value=""]) + label {
+    top: -8px;
+    left: 10px;
+    font-size: 0.75rem;
+    color: #6b9dfc;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  button {
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #6b9dfc, #6ec6ff);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-top: 10px;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(107, 157, 252, 0.3);
+  }
+
+  @media (max-width: 480px) {
+    .form-container {
+      padding: 2px 18px;
+    }
+    .logo-container {
+      height: 140px;
+    }
+    .logo-img {
+      max-height: 130px;
+    }
+    .logo-text {
+      font-size: 1.7rem;
+    }
+  }
+
+  /* ✅ Confirmation Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .modal {
+    background: white;
+    border-radius: 16px;
+    padding: 30px 40px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    animation: pop 0.35s ease;
+  }
+
+  @keyframes pop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .checkmark {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 4px solid #4caf50;
+    position: relative;
+    margin-bottom: 15px;
+    animation: scaleIn 0.3s ease;
+  }
+
+  @keyframes scaleIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .checkmark::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 16px;
+    height: 32px;
+    border-right: 4px solid #4caf50;
+    border-bottom: 4px solid #4caf50;
+    transform: translate(-50%, -60%) rotate(45deg);
+    animation: draw 0.4s ease forwards;
+  }
+
+  @keyframes draw {
+    from { height: 0; width: 0; opacity: 0; }
+    to { height: 32px; width: 16px; opacity: 1; }
+  }
+
+  .modal p {
+    font-size: 1.05rem;
+    color: #333;
+    font-weight: 600;
+  }
+</style>
+</head>
+
+<body>
+  <div class="form-container">
+    <div class="logo-container">
+      <!-- Replace with your logo image by uncommenting the line below -->
+      <img src="logo.png" alt="Company Logo" class="logo-img">
+    </div>
+
+
+    <form id="responseForm" method="POST" action="https://script.google.com/macros/s/AKfycbzJi95QLKYfmKE1cAMSFPMv3r4O1S9op2Omy9GtLGXz_HjP8fLRzlhmDaBBrJlBElaX7g/exec" enctype="multipart/form-data">
+      <!-- Auto Metadata -->
+      <input type="hidden" id="timestamp" name="Timestamp">
+      <input type="hidden" id="device" name="DeviceInfo">
+
+      <div class="field">
+        <input type="date" id="date" name="Date" placeholder=" " />
+        <label for="date">Date</label>
+      </div>
+
+      <div class="field">
+        <input type="text" id="name" name="Name" placeholder=" " required />
+        <label for="name">Name *</label>
+      </div>
+
+      <div class="field">
+        <input type="text" id="partNumber" name="PartNumber" placeholder=" " />
+        <label for="partNumber">Part Number</label>
+      </div>
+
+      <div class="field">
+        <input type="text" id="problem" name="Problem" placeholder=" " required />
+        <label for="problem">Problem *</label>
+      </div>
+
+      <div class="field">
+        <textarea id="problemDesc" name="ProblemDescription" placeholder=" "></textarea>
+        <label for="problemDesc">Problem Description</label>
+      </div>
+
+      <div class="field">
+        <input type="text" id="problemSource" name="ProblemSource" placeholder=" " />
+        <label for="problemSource">Problem Source</label>
+      </div>
+
+      <div class="field">
+        <input type="number" id="rejQty" name="RejectionQty" placeholder=" " />
+        <label for="rejQty">Rejection Qty</label>
+      </div>
+
+      <div class="field">
+        <input type="number" id="totalQty" name="TotalQty" placeholder=" " />
+        <label for="totalQty">Total Qty</label>
+      </div>
+
+      <div class="field">
+        <input type="text" id="process" name="Process" placeholder=" " />
+        <label for="process">Process</label>
+      </div>
+
+      <div class="field">
+        <input type="text" id="workStation" name="WorkStationName" placeholder=" " />
+        <label for="workStation">Work Station Name</label>
+      </div>
+
+      <div class="field">
+        <select id="fourM" name="FourM" value="">
+          <option value="" disabled selected hidden></option>
+          <option>Man</option>
+          <option>Machine</option>
+          <option>Material</option>
+          <option>Method</option>
+        </select>
+        <label for="fourM">4M</label>
+      </div>
+
+      <div class="field">
+        <input type="text" id="status" name="Status" placeholder=" " />
+        <label for="status">Status</label>
+      </div>
+
+      <div class="field">
+        <input type="file" id="photo" name="Photo" accept="image/*" />
+        <label for="photo">Attach Photo (optional)</label>
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+
+  <!-- ✅ Animated Confirmation Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal">
+      <div class="checkmark"></div>
+      <p>Form submitted successfully!</p>
+    </div>
+  </div>
+
+<script>
+const form = document.getElementById("responseForm");
+const modal = document.getElementById("successModal");
+
+// Autofill date + metadata
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("date").value = new Date().toISOString().split("T")[0];
+  document.getElementById("timestamp").value = new Date().toLocaleString();
+  document.getElementById("device").value = navigator.userAgent;
+  
+  // Restore saved form data
+  const saved = localStorage.getItem("formData");
+  if (saved) {
+    const data = JSON.parse(saved);
+    Object.keys(data).forEach((k) => {
+      if (form[k]) form[k].value = data[k];
+    });
+  }
+});
+
+// Save form state
+window.addEventListener("beforeunload", () => {
+  const data = Object.fromEntries(new FormData(form));
+  localStorage.setItem("formData", JSON.stringify(data));
+});
+
+// Haptic feedback
+function vibrate(ms = 40) {
+  if (navigator.vibrate) navigator.vibrate(ms);
+}
+
+// Show confirmation popup
+function showModal() {
+  modal.style.display = "flex";
+  vibrate(100);
+  setTimeout(() => {
+    modal.style.display = "none";
+  }, 2200);
+}
+
+// ✅ Submit handling with base64 photo - FIXED VERSION
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  vibrate(50);
+
+  const formData = new FormData(form);
+  formData.set("Timestamp", new Date().toLocaleString());
+
+  const photoInput = document.getElementById("photo");
+  
+  // Handle form submission with or without photo
+  const submitForm = async (photoData = null) => {
+    if (photoData) {
+      formData.set("Photo", photoData.base64);
+      formData.set("PhotoType", photoData.type);
+      formData.set("PhotoName", photoData.name);
+    }
+    
+    try {
+      await fetch(form.action, { 
+        method: "POST", 
+        body: formData 
+      });
+      showModal();
+      localStorage.removeItem("formData");
+      form.reset();
+      document.getElementById("date").value = new Date().toISOString().split("T")[0];
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert('Error submitting form. Please try again.');
+    }
+  };
+
+  if (photoInput.files.length > 0) {
+    const file = photoInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function() {
+      const dataURL = reader.result;
+      const base64Data = dataURL.split(',')[1];
+      submitForm({
+        base64: base64Data,
+        type: file.type,
+        name: file.name
+      });
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // No photo case
+    submitForm();
+  }
+});
+</script>
+</body>
+</html>
