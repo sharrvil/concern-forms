@@ -39,7 +39,7 @@
 
   .logo-container {
     width: 100%;
-    height: 120px; /* Increased height for larger logo */
+    height: 120px;
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 16px;
     margin-bottom: 25px;
@@ -52,14 +52,14 @@
 
   .logo-img {
     max-width: 95%;
-    max-height: 100px; /* Increased max height for logo */
+    max-height: 100px;
     object-fit: contain;
   }
 
   .logo-text {
     font-weight: 700;
     color: #333;
-    font-size: 1.8rem; /* Increased font size */
+    font-size: 1.8rem;
     text-align: center;
   }
 
@@ -87,10 +87,9 @@
     background: rgba(255, 255, 255, 0.6);
     font-size: 0.95rem;
     transition: all 0.25s ease;
-    min-height: 48px; /* Consistent height for all inputs */
+    min-height: 48px;
   }
 
-  /* Fix for date field width on mobile */
   input[type="date"] {
     -webkit-appearance: none;
   }
@@ -144,11 +143,20 @@
     cursor: pointer;
     transition: 0.2s;
     margin-top: 10px;
+    position: relative;
+    overflow: hidden;
   }
 
-  button:hover {
+  button:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(107, 157, 252, 0.3);
+  }
+
+  button:disabled {
+    background: linear-gradient(135deg, #a0b8e8, #b3d9f7);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
 
   @media (max-width: 480px) {
@@ -235,6 +243,78 @@
     color: #333;
     font-weight: 600;
   }
+
+  /* Cooldown Timer Styles */
+  .cooldown-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 998;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .cooldown-container {
+    background: white;
+    border-radius: 16px;
+    padding: 30px 40px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    animation: pop 0.35s ease;
+  }
+
+  .cooldown-timer {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #6b9dfc;
+    margin: 20px 0;
+  }
+
+  .cooldown-text {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
+  .cooldown-subtext {
+    font-size: 0.9rem;
+    color: #777;
+  }
+
+  /* Loading animation for submit button */
+  .button-loading {
+    position: relative;
+    color: transparent;
+  }
+
+  .button-loading::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+  }
+
+  @keyframes button-loading-spinner {
+    from {
+      transform: rotate(0turn);
+    }
+    to {
+      transform: rotate(1turn);
+    }
+  }
 </style>
 </head>
 
@@ -244,7 +324,6 @@
       <!-- Replace with your logo image by uncommenting the line below -->
       <img src="logo.png" alt="Company Logo" class="logo-img">
     </div>
-
 
     <form id="responseForm" method="POST" action="https://script.google.com/macros/s/AKfycbzJi95QLKYfmKE1cAMSFPMv3r4O1S9op2Omy9GtLGXz_HjP8fLRzlhmDaBBrJlBElaX7g/exec" enctype="multipart/form-data">
       <!-- Auto Metadata -->
@@ -322,7 +401,7 @@
         <label for="photo">Attach Photo (optional)</label>
       </div>
 
-      <button type="submit">Submit</button>
+      <button type="submit" id="submitBtn">Submit</button>
     </form>
   </div>
 
@@ -334,9 +413,25 @@
     </div>
   </div>
 
+  <!-- Cooldown Overlay -->
+  <div class="cooldown-overlay" id="cooldownOverlay">
+    <div class="cooldown-container">
+      <div class="cooldown-text">Please wait before submitting again</div>
+      <div class="cooldown-timer" id="cooldownTimer">5</div>
+      <div class="cooldown-subtext">This prevents duplicate submissions</div>
+    </div>
+  </div>
+
 <script>
 const form = document.getElementById("responseForm");
 const modal = document.getElementById("successModal");
+const cooldownOverlay = document.getElementById("cooldownOverlay");
+const cooldownTimer = document.getElementById("cooldownTimer");
+const submitBtn = document.getElementById("submitBtn");
+
+// Cooldown state
+let isCooldownActive = false;
+let cooldownTime = 5; // seconds
 
 // Autofill date + metadata
 document.addEventListener("DOMContentLoaded", () => {
@@ -351,6 +446,12 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.keys(data).forEach((k) => {
       if (form[k]) form[k].value = data[k];
     });
+  }
+  
+  // Check if cooldown is active from previous session
+  const cooldownEnd = localStorage.getItem("cooldownEnd");
+  if (cooldownEnd && new Date().getTime() < parseInt(cooldownEnd)) {
+    startCooldown(parseInt(cooldownEnd) - new Date().getTime());
   }
 });
 
@@ -374,11 +475,56 @@ function showModal() {
   }, 2200);
 }
 
+// Start cooldown timer
+function startCooldown(durationMs = cooldownTime * 1000) {
+  isCooldownActive = true;
+  submitBtn.disabled = true;
+  
+  // Store cooldown end time
+  const cooldownEnd = new Date().getTime() + durationMs;
+  localStorage.setItem("cooldownEnd", cooldownEnd.toString());
+  
+  // Show cooldown overlay
+  cooldownOverlay.style.display = "flex";
+  
+  // Update timer every second
+  let remainingSeconds = Math.ceil(durationMs / 1000);
+  cooldownTimer.textContent = remainingSeconds;
+  
+  const countdown = setInterval(() => {
+    remainingSeconds--;
+    cooldownTimer.textContent = remainingSeconds;
+    
+    if (remainingSeconds <= 0) {
+      clearInterval(countdown);
+      endCooldown();
+    }
+  }, 1000);
+}
+
+// End cooldown
+function endCooldown() {
+  isCooldownActive = false;
+  submitBtn.disabled = false;
+  cooldownOverlay.style.display = "none";
+  localStorage.removeItem("cooldownEnd");
+}
+
 // ✅ Submit handling with base64 photo - FIXED VERSION
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  
+  // Prevent submission if cooldown is active
+  if (isCooldownActive) {
+    vibrate(200);
+    return;
+  }
+  
   vibrate(50);
 
+  // Show loading state on button
+  submitBtn.classList.add("button-loading");
+  
   const formData = new FormData(form);
   formData.set("Timestamp", new Date().toLocaleString());
 
@@ -397,12 +543,21 @@ form.addEventListener("submit", async (e) => {
         method: "POST", 
         body: formData 
       });
+      
+      // Remove loading state
+      submitBtn.classList.remove("button-loading");
+      
       showModal();
       localStorage.removeItem("formData");
       form.reset();
       document.getElementById("date").value = new Date().toISOString().split("T")[0];
+      
+      // Start cooldown after successful submission
+      startCooldown();
+      
     } catch (error) {
       console.error('Submission error:', error);
+      submitBtn.classList.remove("button-loading");
       alert('Error submitting form. Please try again.');
     }
   };
