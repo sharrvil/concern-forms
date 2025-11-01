@@ -39,7 +39,7 @@
 
   .logo-container {
     width: 100%;
-    height: 120px;
+    height: 120px; /* Increased height for larger logo */
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 16px;
     margin-bottom: 25px;
@@ -52,14 +52,14 @@
 
   .logo-img {
     max-width: 95%;
-    max-height: 100px;
+    max-height: 100px; /* Increased max height for logo */
     object-fit: contain;
   }
 
   .logo-text {
     font-weight: 700;
     color: #333;
-    font-size: 1.8rem;
+    font-size: 1.8rem; /* Increased font size */
     text-align: center;
   }
 
@@ -87,9 +87,10 @@
     background: rgba(255, 255, 255, 0.6);
     font-size: 0.95rem;
     transition: all 0.25s ease;
-    min-height: 48px;
+    min-height: 48px; /* Consistent height for all inputs */
   }
 
+  /* Fix for date field width on mobile */
   input[type="date"] {
     -webkit-appearance: none;
   }
@@ -143,20 +144,11 @@
     cursor: pointer;
     transition: 0.2s;
     margin-top: 10px;
-    position: relative;
-    overflow: hidden;
   }
 
-  button:hover:not(:disabled) {
+  button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(107, 157, 252, 0.3);
-  }
-
-  button:disabled {
-    background: linear-gradient(135deg, #a0b8e8, #b3d9f7);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
   }
 
   @media (max-width: 480px) {
@@ -243,78 +235,6 @@
     color: #333;
     font-weight: 600;
   }
-
-  /* Cooldown Timer Styles */
-  .cooldown-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(4px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 998;
-    animation: fadeIn 0.3s ease;
-  }
-
-  .cooldown-container {
-    background: white;
-    border-radius: 16px;
-    padding: 30px 40px;
-    text-align: center;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    animation: pop 0.35s ease;
-  }
-
-  .cooldown-timer {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #6b9dfc;
-    margin: 20px 0;
-  }
-
-  .cooldown-text {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 10px;
-  }
-
-  .cooldown-subtext {
-    font-size: 0.9rem;
-    color: #777;
-  }
-
-  /* Loading animation for submit button */
-  .button-loading {
-    position: relative;
-    color: transparent;
-  }
-
-  .button-loading::after {
-    content: "";
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    border: 2px solid transparent;
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: button-loading-spinner 1s ease infinite;
-  }
-
-  @keyframes button-loading-spinner {
-    from {
-      transform: rotate(0turn);
-    }
-    to {
-      transform: rotate(1turn);
-    }
-  }
 </style>
 </head>
 
@@ -325,6 +245,7 @@
       <img src="logo.png" alt="Company Logo" class="logo-img">
     </div>
 
+
     <form id="responseForm" method="POST" action="https://script.google.com/macros/s/AKfycbzJi95QLKYfmKE1cAMSFPMv3r4O1S9op2Omy9GtLGXz_HjP8fLRzlhmDaBBrJlBElaX7g/exec" enctype="multipart/form-data">
       <!-- Auto Metadata -->
       <input type="hidden" id="timestamp" name="Timestamp">
@@ -332,76 +253,76 @@
 
       <div class="field">
         <input type="date" id="date" name="Date" placeholder=" " />
-        <label for="date">Date</label>
+        <label for="date">Date / तारीख</label>
       </div>
 
       <div class="field">
         <input type="text" id="name" name="Name" placeholder=" " required />
-        <label for="name">Name *</label>
+        <label for="name">Name / नाव *</label>
       </div>
 
       <div class="field">
         <input type="text" id="partNumber" name="PartNumber" placeholder=" " />
-        <label for="partNumber">Part Number</label>
+        <label for="partNumber">Part Number / पार्ट क्रमांक</label>
       </div>
 
       <div class="field">
         <input type="text" id="problem" name="Problem" placeholder=" " required />
-        <label for="problem">Problem *</label>
+        <label for="problem">Problem / समस्या *</label>
       </div>
 
       <div class="field">
         <textarea id="problemDesc" name="ProblemDescription" placeholder=" "></textarea>
-        <label for="problemDesc">Problem Description</label>
+        <label for="problemDesc">Problem Description / समस्येचे वर्णन</label>
       </div>
 
       <div class="field">
         <input type="text" id="problemSource" name="ProblemSource" placeholder=" " />
-        <label for="problemSource">Problem Source</label>
+        <label for="problemSource">Problem Source / समस्या स्त्रोत</label>
       </div>
 
       <div class="field">
         <input type="number" id="rejQty" name="RejectionQty" placeholder=" " />
-        <label for="rejQty">Rejection Qty</label>
+        <label for="rejQty">Rejection Qty / नकार प्रमाण</label>
       </div>
 
       <div class="field">
         <input type="number" id="totalQty" name="TotalQty" placeholder=" " />
-        <label for="totalQty">Total Qty</label>
+        <label for="totalQty">Total Qty / एकूण प्रमाण</label>
       </div>
 
       <div class="field">
         <input type="text" id="process" name="Process" placeholder=" " />
-        <label for="process">Process</label>
+        <label for="process">Process / प्रक्रिया</label>
       </div>
 
       <div class="field">
         <input type="text" id="workStation" name="WorkStationName" placeholder=" " />
-        <label for="workStation">Work Station Name</label>
+        <label for="workStation">Work Station Name / वर्क स्टेशनचे नाव</label>
       </div>
 
       <div class="field">
         <select id="fourM" name="FourM" value="">
           <option value="" disabled selected hidden></option>
-          <option>Man</option>
-          <option>Machine</option>
-          <option>Material</option>
-          <option>Method</option>
+          <option>Man / माणूस</option>
+          <option>Machine / मशीन</option>
+          <option>Material / मटेरियल</option>
+          <option>Method / पद्धत</option>
         </select>
-        <label for="fourM">4M</label>
+        <label for="fourM">4M / ४M</label>
       </div>
 
       <div class="field">
         <input type="text" id="status" name="Status" placeholder=" " />
-        <label for="status">Status</label>
+        <label for="status">Status / स्थिती</label>
       </div>
 
       <div class="field">
         <input type="file" id="photo" name="Photo" accept="image/*" />
-        <label for="photo">Attach Photo (optional)</label>
+        <label for="photo">Attach Photo (optional) / छायाचित्र जोडा(ऐच्छिक)</label>
       </div>
 
-      <button type="submit" id="submitBtn">Submit</button>
+      <button type="submit">Submit / सादर करा (Press only once/फक्त एकदाच दाबा)</button>
     </form>
   </div>
 
@@ -409,29 +330,13 @@
   <div class="modal-overlay" id="successModal">
     <div class="modal">
       <div class="checkmark"></div>
-      <p>Form submitted successfully!</p>
-    </div>
-  </div>
-
-  <!-- Cooldown Overlay -->
-  <div class="cooldown-overlay" id="cooldownOverlay">
-    <div class="cooldown-container">
-      <div class="cooldown-text">Please wait before submitting again</div>
-      <div class="cooldown-timer" id="cooldownTimer">5</div>
-      <div class="cooldown-subtext">This prevents duplicate submissions</div>
+      <p>Form submitted successfully! फॉर्म यशस्वीपणे सादर झाला आहे!</p>
     </div>
   </div>
 
 <script>
 const form = document.getElementById("responseForm");
 const modal = document.getElementById("successModal");
-const cooldownOverlay = document.getElementById("cooldownOverlay");
-const cooldownTimer = document.getElementById("cooldownTimer");
-const submitBtn = document.getElementById("submitBtn");
-
-// Cooldown state
-let isCooldownActive = false;
-let cooldownTime = 5; // seconds
 
 // Autofill date + metadata
 document.addEventListener("DOMContentLoaded", () => {
@@ -446,12 +351,6 @@ document.addEventListener("DOMContentLoaded", () => {
     Object.keys(data).forEach((k) => {
       if (form[k]) form[k].value = data[k];
     });
-  }
-  
-  // Check if cooldown is active from previous session
-  const cooldownEnd = localStorage.getItem("cooldownEnd");
-  if (cooldownEnd && new Date().getTime() < parseInt(cooldownEnd)) {
-    startCooldown(parseInt(cooldownEnd) - new Date().getTime());
   }
 });
 
@@ -475,99 +374,47 @@ function showModal() {
   }, 2200);
 }
 
-// Start cooldown timer
-function startCooldown(durationMs = cooldownTime * 1000) {
-  isCooldownActive = true;
-  submitBtn.disabled = true;
-  
-  // Store cooldown end time
-  const cooldownEnd = new Date().getTime() + durationMs;
-  localStorage.setItem("cooldownEnd", cooldownEnd.toString());
-  
-  // Show cooldown overlay
-  cooldownOverlay.style.display = "flex";
-  
-  // Update timer every second
-  let remainingSeconds = Math.ceil(durationMs / 1000);
-  cooldownTimer.textContent = remainingSeconds;
-  
-  const countdown = setInterval(() => {
-    remainingSeconds--;
-    cooldownTimer.textContent = remainingSeconds;
-    
-    if (remainingSeconds <= 0) {
-      clearInterval(countdown);
-      endCooldown();
-    }
-  }, 1000);
-}
-
-// End cooldown
-function endCooldown() {
-  isCooldownActive = false;
-  submitBtn.disabled = false;
-  cooldownOverlay.style.display = "none";
-  localStorage.removeItem("cooldownEnd");
-}
-
 // ✅ Submit handling with base64 photo - FIXED VERSION
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  
-  // Prevent submission if cooldown is active
-  if (isCooldownActive) {
-    vibrate(200);
-    return;
-  }
-  
   vibrate(50);
 
-  // Show loading state on button
-  submitBtn.classList.add("button-loading");
-  
+  const submitBtn = form.querySelector("button[type='submit']");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...(refresh if stuck)";
+
   const formData = new FormData(form);
   formData.set("Timestamp", new Date().toLocaleString());
 
   const photoInput = document.getElementById("photo");
-  
-  // Handle form submission with or without photo
+
   const submitForm = async (photoData = null) => {
     if (photoData) {
       formData.set("Photo", photoData.base64);
       formData.set("PhotoType", photoData.type);
       formData.set("PhotoName", photoData.name);
     }
-    
+
     try {
-      await fetch(form.action, { 
-        method: "POST", 
-        body: formData 
-      });
-      
-      // Remove loading state
-      submitBtn.classList.remove("button-loading");
-      
+      await fetch(form.action, { method: "POST", body: formData });
       showModal();
       localStorage.removeItem("formData");
       form.reset();
       document.getElementById("date").value = new Date().toISOString().split("T")[0];
-      
-      // Start cooldown after successful submission
-      startCooldown();
-      
     } catch (error) {
-      console.error('Submission error:', error);
-      submitBtn.classList.remove("button-loading");
-      alert('Error submitting form. Please try again.');
+      console.error("Submission error:", error);
+      alert("Error submitting form. Please try again.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit / सादर करा (Press only once/फक्त एकदाच दाबा)";
     }
   };
 
   if (photoInput.files.length > 0) {
     const file = photoInput.files[0];
     const reader = new FileReader();
-    reader.onload = function() {
+    reader.onload = function () {
       const dataURL = reader.result;
-      const base64Data = dataURL.split(',')[1];
+      const base64Data = dataURL.split(",")[1];
       submitForm({
         base64: base64Data,
         type: file.type,
@@ -576,10 +423,10 @@ form.addEventListener("submit", async (e) => {
     };
     reader.readAsDataURL(file);
   } else {
-    // No photo case
     submitForm();
   }
 });
+
 </script>
 </body>
 </html>
